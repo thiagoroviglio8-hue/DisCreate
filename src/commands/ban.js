@@ -4,15 +4,26 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName("ban")
     .setDescription("Banea a un miembro del servidor.")
-    .addUserOption(o => o.setName("usuario").setDescription("Miembro").setRequired(true))
-    .addStringOption(o => o.setName("motivo").setDescription("Motivo").setMaxLength(400).setRequired(false))
+    .addUserOption(option => option.setName("usuario").setDescription("Miembro").setRequired(true))
+    .addStringOption(option => option.setName("motivo").setDescription("Motivo").setMaxLength(400).setRequired(false))
     .setDefaultMemberPermissions(PermissionFlagsBits.BanMembers),
+
   async execute(interaction) {
     const user = interaction.options.getUser("usuario");
     const reason = interaction.options.getString("motivo") || "Sin motivo indicado";
+
+    if (user.id === interaction.user.id) {
+      return interaction.reply({ content: "No puedes banearte a ti mismo con este comando.", ephemeral: true });
+    }
+
+    await interaction.deferReply({ ephemeral: true });
     const member = await interaction.guild.members.fetch(user.id).catch(() => null);
-    if (member && !member.bannable) return interaction.reply({ content: "No puedo banear a ese miembro. Revisa la jerarquía de roles y mis permisos.", ephemeral: true });
+    if (!member) return interaction.editReply("Ese usuario no es miembro de este servidor.");
+    if (!member.bannable) {
+      return interaction.editReply("No puedo banear a ese miembro. Comprueba mis permisos y la jerarquía de roles.");
+    }
+
     await interaction.guild.members.ban(user.id, { reason });
-    await interaction.reply({ content: "🔨 " + user.tag + " fue baneado. Motivo: " + reason, ephemeral: true });
+    await interaction.editReply("🔨 " + user.tag + " fue baneado. Motivo: " + reason);
   }
 };
