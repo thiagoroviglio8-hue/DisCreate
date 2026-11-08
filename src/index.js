@@ -19,17 +19,36 @@ const client = new Client({
 });
 
 client.commands = new Collection();
-const commandsPath = path.join(__dirname, "commands");
-for (const file of fs.readdirSync(commandsPath).filter(f => f.endsWith(".js"))) {
-  const command = require(path.join(commandsPath, file));
-  client.commands.set(command.data.name, command);
+
+try {
+  const commandsPath = path.join(__dirname, "commands");
+  for (const file of fs.readdirSync(commandsPath).filter(file => file.endsWith(".js"))) {
+    const command = require(path.join(commandsPath, file));
+    if (!command.data?.name || typeof command.execute !== "function") {
+      throw new Error("Comando inválido: " + file);
+    }
+    client.commands.set(command.data.name, command);
+  }
+
+  const eventsPath = path.join(__dirname, "events");
+  for (const file of fs.readdirSync(eventsPath).filter(file => file.endsWith(".js"))) {
+    const event = require(path.join(eventsPath, file));
+    if (!event.name || typeof event.execute !== "function") {
+      throw new Error("Evento inválido: " + file);
+    }
+    const handler = (...args) => Promise.resolve(event.execute(...args, client)).catch(error => {
+      console.error("Error en evento " + event.name + ":", error);
+    });
+    if (event.once) client.once(event.name, handler);
+    else client.on(event.name, handler);
+  }
+} catch (error) {
+  console.error("No se pudo cargar el bot:", error);
+  process.exit(1);
 }
 
-const eventsPath = path.join(__dirname, "events");
-for (const file of fs.readdirSync(eventsPath).filter(f => f.endsWith(".js"))) {
-  const event = require(path.join(eventsPath, file));
-  if (event.once) client.once(event.name, (...args) => event.execute(...args, client));
-  else client.on(event.name, (...args) => event.execute(...args, client));
-}
-
-client.login(process.env.DISCORD_TOKEN);
+client.on("error", error => console.error("Error del cliente Discord:", error));
+client.login(process.env.DISCORD_TOKEN).catch(error => {
+  console.error("No se pudo iniciar sesión. Comprueba DISCORD_TOKEN:", error.message);
+  process.exit(1);
+});
