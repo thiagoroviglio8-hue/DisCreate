@@ -6,36 +6,61 @@ module.exports = {
     .setName("setup")
     .setDescription("Crea roles, categorías y canales básicos sin borrar los existentes.")
     .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
+
   async execute(interaction) {
     await interaction.deferReply({ ephemeral: true });
     const guild = interaction.guild;
-    let createdRoles = 0, createdChannels = 0;
+    if (!guild) return interaction.editReply("Este comando solo funciona dentro de un servidor.");
+
+    let createdRoles = 0;
+    let createdChannels = 0;
+    const rolesByName = new Map(guild.roles.cache.map(role => [role.name, role]));
 
     for (const roleData of config.roles) {
-      if (guild.roles.cache.some(r => r.name === roleData.name)) continue;
-      await guild.roles.create({
+      if (rolesByName.has(roleData.name)) continue;
+      const role = await guild.roles.create({
         name: roleData.name,
         color: roleData.color,
         permissions: roleData.permissions,
         reason: "Configuración inicial de DisCreate"
       });
+      rolesByName.set(role.name, role);
       createdRoles++;
     }
 
+    const everyoneId = guild.roles.everyone.id;
+    const adminRole = rolesByName.get("🛡️・Admin");
+    const modRole = rolesByName.get("🔨・Moderador");
+    const staffOverwrites = [
+      { id: everyoneId, deny: [PermissionFlagsBits.ViewChannel] }
+    ];
+    for (const role of [adminRole, modRole]) {
+      if (role) staffOverwrites.push({
+        id: role.id,
+        allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages, PermissionFlagsBits.ReadMessageHistory]
+      });
+    }
+
     for (const categoryData of config.categories) {
-      let category = guild.channels.cache.find(c =>
-        c.type === ChannelType.GuildCategory && c.name === categoryData.name
+      let category = guild.channels.cache.find(channel =>
+        channel.type === ChannelType.GuildCategory && channel.name === categoryData.name
       );
+
       if (!category) {
+        const isStaff = categoryData.name === config.staffCategory;
         category = await guild.channels.create({
           name: categoryData.name,
           type: ChannelType.GuildCategory,
+          ...(isStaff ? { permissionOverwrites: staffOverwrites } : {}),
           reason: "Configuración inicial de DisCreate"
         });
         createdChannels++;
       }
+
       for (const channelData of categoryData.channels) {
-        if (guild.channels.cache.some(c => c.name === channelData.name)) continue;
+        const alreadyExists = guild.channels.cache.some(channel => channel.name === channelData.name);
+        if (alreadyExists) continue;
+
         await guild.channels.create({
           name: channelData.name,
           type: ChannelType.GuildText,
@@ -50,7 +75,9 @@ module.exports = {
       "✅ Configuración terminada.\n" +
       "Roles creados: **" + createdRoles + "**\n" +
       "Canales/categorías creados: **" + createdChannels + "**\n" +
-      "No se eliminó ningún elemento existente."
+      "La categoría de STAFF nueva queda privada para @everyone y visible para Admin/Moderador.\n" +
+      "No se eliminó ningún elemento existente.\n\n" +
+      "Nota: si la categoría STAFF ya existía, revisa manualmente sus permisos."
     );
   }
 };
