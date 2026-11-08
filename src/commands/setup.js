@@ -67,6 +67,7 @@ module.exports = {
           name: channelData.name,
           type: ChannelType.GuildText,
           parent: category.id,
+          ...(categoryData.name === config.staffCategory ? { permissionOverwrites: staffOverwrites } : {}),
           reason: "Configuración inicial de DisCreate"
         });
         createdChannels++;
