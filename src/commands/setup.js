@@ -28,16 +28,18 @@ module.exports = {
       createdRoles++;
     }
 
-    const everyoneId = guild.roles.everyone.id;
-    const adminRole = rolesByName.get("🛡️・Admin");
-    const modRole = rolesByName.get("🔨・Moderador");
     const staffOverwrites = [
-      { id: everyoneId, deny: [PermissionFlagsBits.ViewChannel] }
+      { id: guild.roles.everyone.id, deny: [PermissionFlagsBits.ViewChannel] }
     ];
-    for (const role of [adminRole, modRole]) {
+    for (const roleName of ["👑・Owner", "🛡️・Admin", "🔨・Moderador"]) {
+      const role = rolesByName.get(roleName);
       if (role) staffOverwrites.push({
         id: role.id,
-        allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages, PermissionFlagsBits.ReadMessageHistory]
+        allow: [
+          PermissionFlagsBits.ViewChannel,
+          PermissionFlagsBits.SendMessages,
+          PermissionFlagsBits.ReadMessageHistory
+        ]
       });
     }
 
@@ -75,7 +77,7 @@ module.exports = {
       "✅ Configuración terminada.\n" +
       "Roles creados: **" + createdRoles + "**\n" +
       "Canales/categorías creados: **" + createdChannels + "**\n" +
-      "La categoría de STAFF nueva queda privada para @everyone y visible para Admin/Moderador.\n" +
+      "La categoría STAFF nueva queda privada para @everyone y visible para Owner/Admin/Moderador.\n" +
       "No se eliminó ningún elemento existente.\n\n" +
       "Nota: si la categoría STAFF ya existía, revisa manualmente sus permisos."
     );
