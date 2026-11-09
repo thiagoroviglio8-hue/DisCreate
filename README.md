@@ -27,6 +27,7 @@ Si necesitas forzar el registro manual, ejecuta `npm run deploy`. Para desactiva
 
 ### Configuración y creación
 - `/setup`: crea los roles, categorías y canales iniciales que falten. No borra elementos existentes.
+- `/plantilla importar url`: importa roles, categorías, canales compatibles y permisos de roles desde una plantilla pública de Discord. No borra elementos existentes; las sobrescrituras de miembros individuales no se copian.
 - `/crear-rol nombre color`: crea un rol sin permisos peligrosos.
 - `/crear-categoria nombre`: crea una categoría.
 - `/crear-canal nombre tipo categoria`: crea un canal de texto, voz o anuncios (anuncios requiere Comunidad), opcionalmente dentro de una categoría.
