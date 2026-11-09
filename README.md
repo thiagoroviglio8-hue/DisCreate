@@ -27,7 +27,7 @@ Bot de Discord.js v14 para configurar y administrar un servidor de Discord que y
 - `/setup`: crea los roles, categorías y canales iniciales que falten. No borra elementos existentes.
 - `/crear-rol nombre color`: crea un rol sin permisos peligrosos.
 - `/crear-categoria nombre`: crea una categoría.
-- `/crear-canal nombre categoria`: crea un canal de texto, opcionalmente dentro de una categoría.
+- `/crear-canal nombre tipo categoria`: crea un canal de texto, voz o anuncios (anuncios requiere Comunidad), opcionalmente dentro de una categoría.
 - `/rol dar` y `/rol quitar`: asigna o retira un rol a un miembro.
 - `/ticket-panel`: publica el panel de tickets.
 
