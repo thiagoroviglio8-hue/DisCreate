@@ -47,8 +47,8 @@ try {
   process.exit(1);
 }
 
-// Registro automático de comandos slash al iniciar sesión.
-// Los comandos de servidor se actualizan casi inmediatamente.
+// Registro automático GLOBAL de comandos slash. No requiere GUILD_ID.
+// Los comandos globales pueden tardar un tiempo en aparecer en Discord.
 client.once("clientReady", async () => {
   console.log("🤖 Conectado como " + client.user.tag);
   const autoDeploy = (process.env.AUTO_DEPLOY_COMMANDS || "true").toLowerCase() !== "false";
@@ -58,19 +58,21 @@ client.once("clientReady", async () => {
     return;
   }
 
-  const { CLIENT_ID, GUILD_ID, DISCORD_TOKEN } = process.env;
+  const { CLIENT_ID, DISCORD_TOKEN } = process.env;
+  const applicationId = CLIENT_ID || client.application?.id;
   const snowflakePattern = /^\d{17,20}$/;
-  if (!CLIENT_ID || !GUILD_ID || !snowflakePattern.test(CLIENT_ID) || !snowflakePattern.test(GUILD_ID)) {
-    console.warn("⚠️ No se registraron comandos automáticamente: CLIENT_ID o GUILD_ID faltan o no son válidos.");
-    console.warn("Completa esos valores en .env y reinicia el bot.");
+  if (!applicationId || !snowflakePattern.test(applicationId)) {
+    console.warn("⚠️ No se registraron comandos: no pude obtener el ID de la aplicación.");
+    console.warn("Configura CLIENT_ID en las variables del hosting y reinicia el bot.");
     return;
   }
 
   try {
     const body = [...client.commands.values()].map(command => command.data.toJSON());
     const rest = new REST({ version: "10" }).setToken(DISCORD_TOKEN);
-    await rest.put(Routes.applicationGuildCommands(CLIENT_ID, GUILD_ID), { body });
-    console.log("✅ Registro automático completado: " + body.length + " comandos slash.");
+    await rest.put(Routes.applicationCommands(applicationId), { body });
+    console.log("✅ Registro GLOBAL completado: " + body.length + " comandos slash.");
+    console.log("ℹ️ Los comandos globales pueden tardar un tiempo en aparecer en todos los servidores.");
   } catch (error) {
     console.error("❌ Falló el registro automático de comandos:", error);
     console.error("Puedes intentar manualmente con: npm run deploy");
