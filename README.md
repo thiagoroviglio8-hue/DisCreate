@@ -17,9 +17,11 @@ Bot de Discord.js v14 para configurar y administrar un servidor de Discord que y
 3. Copia `.env.example` como `.env`.
 4. Completa `DISCORD_TOKEN`, `CLIENT_ID` y `GUILD_ID` en `.env`.
 5. En Developer Portal > Bot, activa **Server Members Intent** y guarda los cambios.
-6. Ejecuta `npm run deploy`.
-7. Ejecuta `npm start`.
+6. Deja `AUTO_DEPLOY_COMMANDS=true` (valor predeterminado).
+7. Ejecuta `npm start`. Cuando el bot se conecte, registrará automáticamente los comandos slash en el servidor indicado por `GUILD_ID`.
+8. En el servidor, ejecuta `/setup` y después `/ticket-panel` donde quieras publicar el panel.
 
+Si necesitas forzar el registro manual, ejecuta `npm run deploy`. Para desactivar el registro automático, configura `AUTO_DEPLOY_COMMANDS=false`.
 
 ## Comandos disponibles
 
