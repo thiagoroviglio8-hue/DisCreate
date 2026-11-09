@@ -8,7 +8,7 @@ module.exports = {
  .addChannelOption(o=>o.setName("categoria").setDescription("Categoría donde se creará").addChannelTypes(ChannelType.GuildCategory).setRequired(false))
  .setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels),
  async execute(interaction) {
-  const name=interaction.options.getString("nombre").trim().toLowerCase().replace(/\\s+/g,"-");
+  const name=interaction.options.getString("nombre").trim().toLowerCase().replace(/\s+/g,"-");
   const kind=interaction.options.getString("tipo");
   const parent=interaction.options.getChannel("categoria");
   const type=kind==="voz"?ChannelType.GuildVoice:kind==="anuncios"?ChannelType.GuildAnnouncement:ChannelType.GuildText;
