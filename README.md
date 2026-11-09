@@ -19,7 +19,7 @@ Bot de Discord.js v14 para configurar y administrar un servidor de Discord que y
 5. En Developer Portal > Bot, activa **Server Members Intent** y guarda los cambios.
 6. Ejecuta `npm run deploy`.
 7. Ejecuta `npm start`.
-8. En tu servidor, ejecuta `/setup` y después `/ticket-panel` en el canal donde quieras mostrar el panel.
+
 
 ## Comandos disponibles
 
@@ -51,7 +51,7 @@ Bot de Discord.js v14 para configurar y administrar un servidor de Discord que y
 - `/ping`: comprueba la latencia.
 - `/ayuda`: lista los comandos registrados.
 
-Los comandos aparecen en Discord después de ejecutar `npm run deploy`. Los permisos de cada comando también se validan en Discord y en el código.
+Los comandos se registran automáticamente al iniciar sesión cuando `AUTO_DEPLOY_COMMANDS=true` y `CLIENT_ID`/ `GUILD_ID` están completos. Si el registro automático falla, revisa el error de consola y prueba `npm run deploy`. Para desactivar el registro automático, configura `AUTO_DEPLOY_COMMANDS=false`. Los permisos de cada comando también se validan en Discord y en el código.
 
 ## Permisos y seguridad
 - La categoría STAFF se crea privada para @everyone y visible para Owner/Admin/Moderador. Si ya existía, el bot no modifica sus permisos: revísalos manualmente.
