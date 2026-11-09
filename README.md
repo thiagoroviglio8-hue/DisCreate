@@ -15,10 +15,10 @@ Bot de Discord.js v14 para configurar y administrar un servidor de Discord que y
 1. Clona o descarga el repositorio.
 2. Ejecuta `npm install`.
 3. Copia `.env.example` como `.env`.
-4. Completa `DISCORD_TOKEN`, `CLIENT_ID` y `GUILD_ID` en `.env`.
+4. Completa `DISCORD_TOKEN` y `CLIENT_ID` en `.env`. No necesitas `GUILD_ID`.
 5. En Developer Portal > Bot, activa **Server Members Intent** y guarda los cambios.
 6. Deja `AUTO_DEPLOY_COMMANDS=true` (valor predeterminado).
-7. Ejecuta `npm start`. Cuando el bot se conecte, registrará automáticamente los comandos slash en el servidor indicado por `GUILD_ID`.
+7. Ejecuta `npm start`. Cuando el bot se conecte, registrará automáticamente los comandos slash de forma GLOBAL para todos los servidores donde esté instalado.
 8. En el servidor, ejecuta `/setup` y después `/ticket-panel` donde quieras publicar el panel.
 
 Si necesitas forzar el registro manual, ejecuta `npm run deploy`. Para desactivar el registro automático, configura `AUTO_DEPLOY_COMMANDS=false`.
@@ -54,7 +54,7 @@ Si necesitas forzar el registro manual, ejecuta `npm run deploy`. Para desactiva
 - `/ping`: comprueba la latencia.
 - `/ayuda`: lista los comandos registrados.
 
-Los comandos se registran automáticamente al iniciar sesión cuando `AUTO_DEPLOY_COMMANDS=true` y `CLIENT_ID`/ `GUILD_ID` están completos. Si el registro automático falla, revisa el error de consola y prueba `npm run deploy`. Para desactivar el registro automático, configura `AUTO_DEPLOY_COMMANDS=false`. Los permisos de cada comando también se validan en Discord y en el código.
+Los comandos se registran automáticamente de forma GLOBAL al iniciar sesión cuando `AUTO_DEPLOY_COMMANDS=true` y `CLIENT_ID` está completo. No se necesita `GUILD_ID`. Los comandos globales pueden tardar un tiempo en propagarse y aparecer en todos los servidores. Si el registro automático falla, revisa el error de consola y prueba `npm run deploy`. Para desactivar el registro automático, configura `AUTO_DEPLOY_COMMANDS=false`. Los permisos de cada comando también se validan en Discord y en el código.
 
 ## Permisos y seguridad
 - La categoría STAFF se crea privada para @everyone y visible para Owner/Admin/Moderador. Si ya existía, el bot no modifica sus permisos: revísalos manualmente.
