@@ -119,7 +119,7 @@ module.exports = {
     }
 
     const template = await response.json();
-    const source = template.serialized_source;
+    const source = template.serialized_source_guild || template.serialized_source;
     if (!source || !Array.isArray(source.channels) || !Array.isArray(source.roles)) {
       return interaction.editReply("❌ La plantilla no contiene una estructura compatible para importar.");
     }
