@@ -49,7 +49,7 @@ try {
 
 // Registro automático de comandos slash al iniciar sesión.
 // Los comandos de servidor se actualizan casi inmediatamente.
-client.once("ready", async () => {
+client.once("clientReady", async () => {
   console.log("🤖 Conectado como " + client.user.tag);
   const autoDeploy = (process.env.AUTO_DEPLOY_COMMANDS || "true").toLowerCase() !== "false";
 
@@ -59,7 +59,7 @@ client.once("ready", async () => {
   }
 
   const { CLIENT_ID, GUILD_ID, DISCORD_TOKEN } = process.env;
-  const snowflakePattern = /^\\d{17,20}$/;
+  const snowflakePattern = /^\d{17,20}$/;
   if (!CLIENT_ID || !GUILD_ID || !snowflakePattern.test(CLIENT_ID) || !snowflakePattern.test(GUILD_ID)) {
     console.warn("⚠️ No se registraron comandos automáticamente: CLIENT_ID o GUILD_ID faltan o no son válidos.");
     console.warn("Completa esos valores en .env y reinicia el bot.");
